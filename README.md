@@ -1,4 +1,4 @@
 # Data-Science-Capstone
 
 TOC
-- Yelp Relational DataModelo
+- Yelp Relational DataModel
