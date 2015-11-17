@@ -1,0 +1,48 @@
+Capstone Report
+========================================================
+author: RUBEN ADAD
+date: Nov/17/2015
+
+Introduction
+========================================================
+
+The purpose of this project is to come up with some interesting questions using data from the "Yelp Data Set Challenge". The questions I addressed were:
+
+1. Which kind of reviews (positive or negative) impact more business attendance (check-in).
+2. Investigate which attributes impact more on business attendance (check-in) by category. 
+3. Find the most reliable users based on their number of reviews, duration as yelp user, number of tips, number of compliments, number of fans and number of friends.  
+
+Data preparation
+========================================================
+
+- I transformed the JSON data into a relational format because SQL is a more powerful language for exploratory analysis.
+- The following diagrams shows the resulting entity relationship model.
+
+![alt text](yelp_datamodel_summary.pdf)
+
+
+Methods
+========================================================
+
+1. Impact of positive/negative reviews on check-in
+  - Correlation between *stars* and *check-in*
+  - Tree model for predicting *stars* based on *check-in*
+2. Which attributes impact more on business attendance
+  - Random forest models for predicting *check-in*
+  - Obtain top 10 more important variables from the model
+  - Create new models with the top 10 variables and compare
+3. Find most reliable users
+  - Clustering to find the group of users with more activity in Yelp
+  - Network analysis on "friends" network to find the users with greater **betweenness** and **page rank**
+
+Results
+========================================================
+
+1. Impact of positive/negative reviews on check-in
+  - I didn't found any relation between *stars* and *check-in*
+2. Which attributes impact (increase/decrease) business attendance
+  - **Restaurants:** ambience divey, caters, wi-fi, etc.
+  - **Shopping:** parking lot, price range, dogs allowed, etc.
+3. Find most reliable users
+  - Those having on average 1,600 reviews, 400 fans, 1,000 friends, 15,000 compliments, etc
+  - List of the top influential users according to their friends network

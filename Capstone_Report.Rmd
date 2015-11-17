@@ -6,20 +6,20 @@ output: html_document
 ---
 
 # Title
-The purpose of this project is to come up with some interesting questions around the online review data available from the Yelp Data Set Challenge (http://www.yelp.com/dataset_challenge) and try to find plausible answers to them.
+The purpose of this project is to come up with some interesting questions around the online review data available from the Yelp Data Set Challenge (http://www.yelp.com/dataset_challenge) and try to find them a plausible answer.
 
 # Introduction
 I will address the following questions:
 
-1. Which reviews (positive or negative) have more impact on business attendance (check-in) by category (limited to restaurants and shopping).
+1. Which kind of reviews (positive or negative) impact more business attendance (check-in) by category (limited to restaurants and shopping).
 
-2. Investigate which attributes have more impact on business attendance (check-in) by category (limited to restaurants and shopping). 
+2. Investigate which attributes impact more on business attendance (check-in) by category (limited to restaurants and shopping). 
 
-3. Find the most reliable users based on the number of reviews, time as yelp user, the number of tips, number of compliments, number of fans and number of friends. Derive the rules that characterize this group so any "yelper" could apply these rules to decide which reviews could be more valuable.
+3. Find the most reliable users based on their number of reviews, duration as yelp user, number of tips, number of compliments, number of fans and number of friends. Derive the rules that characterize this group so any "yelper" may apply these rules to decide which reviews might be more valuable.
 
-I think that the answers to these questions could be of interest to business owners and Yelp users as well.
+I think that the answers to these questions can be both interesting to business owners as well as to Yelp users.
 
-In order to keep this report brief, I will only show the most relevant results. The details of the whole process I followed can be found on github:
+In order to keep brief this report, I will only show the most relevant results. Details of the whole process I followed can be found on github:
 
 * https://github.com/nebursm/Data-Science-Capstone 
 
@@ -31,25 +31,20 @@ script for loading the data can be found in the following file **mongoscript.txt
 used the community edition of Mongo Management Studio (http://www.litixsoft.de) to browse
 through the data.
 
-Then I transform the JSON data to relational format. The reason
-for this is that I believe SQL is a much more powerful language for exploratory 
-analysis than MongoDB query capabilities. The R script for doing the transformation can be found in the following file **Capstone_data_preparation.R**.
+Then I transformed the JSON data into a relational format because I believe SQL is a more powerful language for exploratory analysis than MongoDB query capabilities. The R script for doing the transformation can be found in the following file **Capstone_data_preparation.R**.
 
 After this, I loaded the data in a MySQL database. The procedure for loading the data and the
-DDL to create the tables can be found in the following file **yelp_01.sql**. In the file 
-**yelp_02.sql** you can find some sample queries. Finally a picture of the data model showing the
+DDL to create the tables can be found in the following file **yelp_01.sql**. In file **yelp_02.sql** you can find some sample queries. Finally a picture of the data model showing the
 relationship between the tables can be found in **yelp_datamodel.pdf**.
 
-Based on this exploratory analysis I formulated the research questions and device possible outcomes for each of them.
+Based on this exploratory analysis I formulated the research questions and imagine some possible outcomes for each of them.
 
 ## Which reviews have more impact on business attendance
 
-Contrary to my expectations it seems that there is no significant relationship between the
-variables *stars* and *checkin_tot*. As you can see in the following lines the correlation 
-of these two variables is pretty close to zero. 
+Contrary to my expectations it seems that there is no significant relationship between variables *stars* and *checkin_tot*. As you can see in the following lines, the correlation of these two variables is almost zero. 
 
-I also tried to build a prediction model using trees for these two variables and the result
-I got once again show me that there is no meaningful relationship regardless of the number
+I also tried to build a prediction model using trees for these two variables but the result
+I got once again showed me that there is no meaningful relationship regardless of the number
 of stars the business has. 
 
 The complete R script is in the file **Capstone_Question01.R**.
@@ -94,24 +89,24 @@ library(Hmisc)
 library(caret)
 ```
 
-The complete R script for this question is in the file **Capstone_Question02.R**.
+The complete R script for this question is in file **Capstone_Question02.R**.
 
-The general procedure is as follows:
+The general procedure was:
 
 1. Read business data. The result is a data frame with 22,075 observations and 124 variables.
 2. Replace all logical variables with dummy variables.
 3. Remove all unnecessary columns.
-4. Remove confounding variables (tip_count and review_count because they are highly correlated with the predictor variable checkin_tot).
+4. Remove confounding variables (tip_count and review_count) because they are highly correlated with the predictor variable checkin_tot).
 5. Discretize the predictor variable *checkin_tot*.
-6. Subset business data into restaurant data and shopping data.
+6. Create 2 subsets, restaurant data and shopping data.
 7. Remove other attributes with high correlation in each subset.
 8. Create training and testing data for each subset.
 9. Train a random forest model for each training subset.
-10. Calculate model accuracy for each category (restaurant, shopping).
+10. Calculate the model accuracy for each category (restaurant, shopping).
 11. Print the 10 most important variables for each category.
-12. Generate new models using only top 10 variables to compare with original models.
+12. Generate new models using only the top 10 variables to compare with original models.
 
-The following code partially illustrates steps 10 to 12 of the above procedure.
+The following code partially illustrates steps 10 to 12 of the procedure.
 
 ```{r warning=FALSE}
 # Calculate model accuracy for each category:
@@ -144,7 +139,7 @@ library(ggplot2)
 
 The complete R script for this question is in file **Capstone_Question03.R**.
 
-To find the most reliable users I have used two different approaches. First I used an unsupervised clustering algorithm to split user data into groups. To find the number of clusters one option is to use the within sum of squares which measure the euclidean distance among the different members of each group for a different number of clusters. 
+To find the most reliable users I used two different approaches. First I used an unsupervised clustering algorithm to split user data into groups. To find the number of clusters I used the within sum of squares which measure the euclidean distance among the different members of each group for different number of clusters. 
 
 ```{r warning=FALSE}
 set.seed(12345)
@@ -158,9 +153,9 @@ ggplot(assignments, aes(review_count, tot_compliments)) + geom_point(aes(color=.
 ggplot(clusterings, aes(k, tot.withinss)) + geom_line()
 ```
 
-From here we conclude that k=4 is a reasonable number of clusters. More clusters add little value according to the total within the sum of squares. Also, a visual examination of the distinct number of clusters confirms this. 
+From here we can conclude that k=4 is a reasonable number of clusters. More clusters add little value according to the total within the sum of squares. Also, a visual examination of the distinct number of clusters confirms this. 
 
-Using k-means we create 4 groups of users with the following characteristics:
+Using k-means I created 4 groups of users with the following characteristics:
 
 ```{r warning=FALSE}
 # get cluster means 
@@ -169,12 +164,12 @@ aggregate(user_sub,by=list(fit$cluster),FUN=mean)
 
 So group 2 is the one with the users with more reviews, fans, friends, etc.
 
-Now, the second approach used was using network analysis algorithms. For this, I have used the friends data to build a network with 2,576,179 nodes and 174,100 edges. Using this network I performed 2 analysis:
+Now, in the second approach I used network analysis algorithms. For this, Using the friends data, I built a network with 2,576,179 nodes and 174,100 edges and performed 2 analysis:
 
 * Betweenness centrality: It is equal to the number of shortest paths from all vertices to all others that pass through that node. A node with high betweenness centrality has a large influence on the transfer of items through the network, under the assumption that item transfer follows the shortest paths. (https://en.wikipedia.org/wiki/Betweenness_centrality)
 * Page Rank: The PageRank algorithm outputs a probability distribution used to represent the likelihood that a person randomly clicking on links will arrive at any particular page. (https://en.wikipedia.org/wiki/PageRank)
 
-We obtain the top 20 users according to each criterion and then create a new subset from the intersection of both sets of users.
+I obtained the top 20 users according to each criterion and then created a new subset from the intersection of both sets of users.
 
 We can see the results in the following graph:
 
@@ -194,32 +189,32 @@ intersect(unames[,2],user_sub_cl2$user_id)
 
 ### Which reviews have more impact on business attendance
 We have to further investigate if ratings influence Yelp users decision to attend a particular
-business. From the results, I got it seems that ratings have little to do with business 
+business. Based on the results I obtained, it seems that ratings have little to do with business 
 attendance.
 
 ### Investigate which attributes have more impact on business attendance
-From the model accuracy, we can conclude that random forest generates a reasonable predicting model for business check-in. Accuracy for restaurants was 0.72 and for shopping 0.69. These models were built with 69 variables in the case of restaurants and 41 variables for shopping. If we build the models using only the 10 most influential variables we lost a little bit of accuracy, but we have more simple models. Accuracy drops from 0.72 to 0.66 in the model for restaurants, and from 0.69 to 0.61 in the one for shopping.
+From the model accuracy, we can conclude that random forest generates a reasonable predicting model for business check-in. Accuracy for restaurants was 0.72 and for shopping 0.69. These models were built with 69 variables for restaurants and 41 variables for shopping. If we build the models using only the 10 most influential variables we loose some accuracy, but we have simpler models. Accuracy drops from 0.72 to 0.66 in the restaurant model, and from 0.69 to 0.61 in the shopping model.
 
-Most important variables for restaurants are:
+The most important variables for restaurants are:
 ```{r}
 rest_imp <- varImp(rest_trn_rf)
 plot(rest_imp, top = 10)
 ```
 
-Most important variables for shopping are:
+The most important variables for shopping are:
 ```{r}
 shop_imp <- varImp(shop_trn_rf)
 plot(shop_imp, top = 10)
 ```
 
 ### Find the most reliable users 
-Using clustering we were able to find a small group of 57 users which seems to be the most reliable because of their high participation in Yelp. Among other characteristics this group has the following (the figures were obtain using the mean value of each attribute for cluster 2):
+Using clustering I was able to find a small group of 57 users which seems to be the most reliable because of their high participation in Yelp. Among other characteristics this group has the following numbers (the figures were obtain using the mean value of each attribute for cluster 2):
 
 ```{r warning=FALSE}
 (aggregate(user_sub,by=list(fit$cluster),FUN=mean))[2,]
 ```
 
-From network analysis we obtained a group of 16 users which are the most influential according to betweenness centrality and page rank:
+From the network analysis I obtained a group of 16 users which are the most influential according to betweenness centrality and page rank:
 
 ```{r}
 V(user_net)[top_both]
@@ -233,16 +228,16 @@ intersect(unames[,2],user_sub_cl2$user_id)
 
 # Discussion
 
-From the results obtained for each of my questions, the most surprising was that review ratings are not correlated to business attendance. I was trying to find if a negative review has more impact than a positive review or vice versa. There is one thing that could lead to further research. The correlation between low ratings (less or equal to 2 stars) and total check-ins is 0.12 while the correlation between high ratings (great or equal to 4 stars) and total check-ins is -0.11. Even though both values are close to zero one is positive and the other negative. Maybe if we extend the analysis to include the review text we can find something more interesting.  
+From the results obtained for each of my questions, the most surprising result was that review ratings are not correlated to business attendance. I was trying to find if a negative review has more impact than a positive review or vice versa. There is one thing that could lead to further research. The correlation between low ratings (less or equal to 2 stars) and total check-ins is 0.12 while the correlation between high ratings (great or equal to 4 stars) and total check-ins is -0.11. Even though both values are close to zero one is positive and the other negative. Maybe by extending the analysis to include the review text we may find something more interesting.  
 
-The results for the other 2 questions are very interesting and could be of some values for 2 different groups. 
+The results for the other 2 questions are very interesting and useful for 2 different groups. 
 
-Remember that question 2 investigates the most significant attributes related to restaurant and shopping attendance. This results could be used by business owners to evaluate if adding some features to their places could lead to increase sales. For instance, providing wi-fi in restaurants or parking valet in shopping centers.   
+Remember that question 2 investigates the most significant attributes related to restaurant and shopping attendance. These results may help business increase their sales by adding some of the mose relevant features found (for example, wi-fi in restaurants or parking valet in shopping centers).   
 
-In question 3 I tried to find the most reliable users using 2 approaches. The first one was to build a cluster of the user with more participation in Yelp and derive the group characteristics. So we found that users that on average have around 1,600 reviews, 400 fans, 1,000 friends, 15,000 compliments, etc. Yelp users could use this as criteria when checking a review and also could help to disregard fake reviews since I don't think fake reviews get as many compliments.
+In question 3 I tried to find the most reliable users using 2 approaches. The first one builds a cluster of the users with more participation in Yelp and derive the group characteristics. I found that Yelp users can obtain a reliable review when it comes from those who meet the group characteristics (those having on average 1,600 reviews, 400 fans, 1,000 friends, 15,000 compliments, etc). Very important is that fake reviews will be more evident since they don't get as many compliments as real ones. 
 
-With the second approach, we used network analysis to get a list of more influential users according to their friends network. Once again, the reviews from this users could be the first to check for a Yelp user. 
+With the second approach, I used network analysis to get a list of the top influential users according to their friends network. Once again, the reviews from these users could be the first a Yelp user might check with confidence. 
 
-Finally, all the results need to be updated periodically with new data from Yelp to keep the models current and valid.
+Finally, all the results need to be periodically updated with new data from Yelp to keep the models current and valid.
 
 
